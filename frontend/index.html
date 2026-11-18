@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080d1b">
+  <title>QR PRODUCT AI — Smart Product Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+  <div class="ambient a1"></div><div class="ambient a2"></div>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-icon">⌗</span><span>QR PRODUCT <b>AI</b><small>SMART PRODUCT INTELLIGENCE</small></span></a>
+    <nav><a href="#scanner">Skaner</a><a href="#tools">Imkoniyatlar</a><a href="#history">Tarix</a></nav>
+    <span class="live"><i></i> TIZIM TAYYOR</span>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span></span> NEXT-GEN PRODUCT SCANNER</div>
+      <h1>Mahsulotni <em>skanerlang.</em><br>Ma’lumotni biling.</h1>
+      <p>QR-kod, shtrix-kod va qadoq yozuvlarini bir joyda tahlil qiling. Sana belgilarini aniqlang, matnni tarjima qiling va mahsulot ma’lumotlarini izlang.</p>
+      <div class="hero-pills"><span>⌗ QR & BARCODE</span><span>文 MULTI-LANGUAGE OCR</span><span>◷ DATE CHECK</span></div>
+    </section>
+
+    <section class="scanner-grid" id="scanner">
+      <article class="panel scan-panel">
+        <div class="panel-head"><div><span class="section-kicker">01 / SCANNER</span><h2>Kodni skanerlash</h2></div><span class="status">READY</span></div>
+        <div id="reader" class="reader"><div class="reader-placeholder"><div class="scan-symbol">⌗</div><b>Kamera skaneri</b><span>Kamerani ishga tushirib, kodni ramka ichiga joylashtiring</span></div></div>
+        <div class="button-row"><button id="startScan" class="btn primary">Kamerani yoqish</button><button id="stopScan" class="btn secondary" disabled>To‘xtatish</button></div>
+        <div class="divider-label"><span>YOKI KODNI QO‘LDA KIRITING</span></div>
+        <div class="inline-form"><input id="barcodeInput" placeholder="Barcode / QR matni..." autocomplete="off"><button id="lookupBtn" class="btn secondary">Qidirish</button></div>
+        <p class="hint" id="scanMessage">Kamera uchun localhost yoki HTTPS va ruxsat talab qilinadi.</p>
+      </article>
+
+      <article class="panel product-panel">
+        <div class="panel-head"><div><span class="section-kicker">02 / PRODUCT DATA</span><h2>Mahsulot ma’lumoti</h2></div><span class="chip">LIVE LOOKUP</span></div>
+        <div id="productResult" class="empty-state"><div class="empty-icon">▧</div><b>Hali mahsulot tanlanmagan</b><span>Kodni skanerlang yoki raqamini kiriting. Ma’lumotlar mavjud bazadan qidiriladi.</span></div>
+        <div id="productDetails" class="product-details hidden"></div>
+      </article>
+    </section>
+
+    <section class="panel ocr-panel" id="tools">
+      <div class="panel-head"><div><span class="section-kicker">03 / PACKAGE INTELLIGENCE</span><h2>Qadoq yozuvlarini tahlil qilish</h2></div><span class="chip">OCR + DATE</span></div>
+      <div class="ocr-grid">
+        <div class="upload-area">
+          <input id="imageInput" type="file" accept="image/*" hidden>
+          <div id="imageDrop" class="dropzone"><div class="upload-icon">⇧</div><b>Qadoq rasmini yuklang</b><span>JPG, PNG yoki WEBP · yorliq aniq ko‘rinsin</span><button class="btn secondary" id="chooseImage">Rasm tanlash</button></div>
+          <img id="imagePreview" class="preview hidden" alt="Yuklangan qadoq rasmi">
+          <div class="field-row"><label for="ocrLang">OCR tili</label><select id="ocrLang"><option value="eng+rus">Ingliz + Rus</option><option value="eng">Ingliz</option><option value="rus">Rus</option><option value="chi_sim">Xitoy (soddalashtirilgan)</option><option value="deu">Nemis</option><option value="fra">Fransuz</option><option value="spa">Ispan</option><option value="tur">Turk</option></select></div>
+          <button id="runOcr" class="btn primary full" disabled>Matnni o‘qish va sanani topish</button>
+          <div class="progress hidden" id="ocrProgress"><span id="progressBar"></span></div><p id="ocrStatus" class="hint">OCR uchun rasm tanlang.</p>
+        </div>
+        <div class="analysis-area">
+          <label for="ocrText">Aniqlangan original matn</label>
+          <textarea id="ocrText" rows="8" placeholder="OCR natijasi shu yerda ko‘rinadi. Matnni qo‘lda ham kiritishingiz mumkin..."></textarea>
+          <div class="button-row"><button id="findDates" class="btn secondary">Sanalarni aniqlash</button><button id="translateBtn" class="btn primary">O‘zbekchaga tarjima</button></div>
+          <div id="dateResult" class="date-result"><span class="muted">Sana tahlili hali bajarilmadi.</span></div>
+          <label for="translatedText" class="translate-label">Tarjima natijasi</label>
+          <textarea id="translatedText" rows="4" placeholder="Tarjima shu yerda chiqadi..." readonly></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel condition-panel">
+      <div class="panel-head"><div><span class="section-kicker">04 / PACKAGE CONDITION</span><h2>Qadoq kuzatuvi</h2></div><span class="chip">VISUAL CHECK</span></div>
+      <p class="muted">Rasmni ko‘zdan kechiring va ko‘rinadigan holatlarni belgilang. Bu bo‘lim avtomatik ekspertiza emas — kuzatuv qaydi.</p>
+      <div class="checks">
+        <label><input type="checkbox" value="Qadoqda yirtiq bor"> <span>Yirtiq yoki teshik</span></label>
+        <label><input type="checkbox" value="Qadoq ezilgan"> <span>Ezilgan yoki bukilgan</span></label>
+        <label><input type="checkbox" value="Yorliq o‘qilmaydi"> <span>Yorliq o‘qilmaydi</span></label>
+        <label><input type="checkbox" value="Muhr shikastlangan"> <span>Muhr shikastlangan</span></label>
+        <label><input type="checkbox" value="Ko‘rinadigan muammo yo‘q"> <span>Ko‘rinadigan muammo yo‘q</span></label>
+      </div>
+      <button id="saveCondition" class="btn secondary">Kuzatuvni saqlash</button><p id="conditionMessage" class="hint"></p>
+    </section>
+
+    <section class="panel history-panel" id="history">
+      <div class="panel-head"><div><span class="section-kicker">05 / RECENT ACTIVITY</span><h2>Oxirgi tekshiruvlar</h2></div><button id="clearHistory" class="text-btn">Tarixni tozalash</button></div>
+      <div id="historyList" class="history-list"><div class="muted">Hozircha tekshiruvlar yo‘q.</div></div>
+    </section>
+
+    <section class="feature-section">
+      <div class="section-kicker">WHY QR PRODUCT AI</div><h2>Bitta platforma. <em>Olti imkoniyat.</em></h2>
+      <div class="features">
+        <div class="feature"><span>⌗</span><h3>QR & Barcode</h3><p>QR-kod va mashhur shtrix-kod formatlarini o‘qish, mahsulot bazasidan qidirish.</p></div>
+        <div class="feature"><span>文</span><h3>Ko‘p tilli OCR</h3><p>Rus, ingliz, xitoy va boshqa tillardagi qadoq yozuvlarini matnga aylantirish.</p></div>
+        <div class="feature"><span>◷</span><h3>Sana aniqlash</h3><p>MFG, EXP, Best Before va boshqa sana belgilarini topish hamda izohlash.</p></div>
+        <div class="feature"><span>⇄</span><h3>Tarjima</h3><p>Original matnni saqlagan holda o‘zbek tiliga tarjima qilish.</p></div>
+        <div class="feature"><span>▧</span><h3>Qadoq kuzatuvi</h3><p>Rasmda ko‘rinadigan yirtiq, shikast yoki o‘qilmaydigan yorliqni qayd etish.</p></div>
+        <div class="feature"><span>◫</span><h3>Mahsulot ma’lumoti</h3><p>Brend, kategoriya, tarkib va ishlab chiqaruvchi ma’lumotlarini ko‘rsatish.</p></div>
+      </div>
+    </section>
+  </main>
+  <footer><span>⌗ QR PRODUCT AI</span><span>SMARTER PRODUCT INFORMATION · 2026</span></footer>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="./js/app.js"></script>
+</body>
+</html>
